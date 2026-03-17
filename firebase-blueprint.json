@@ -1,0 +1,109 @@
+{
+  "entities": {
+    "Tenant": {
+      "title": "Tenant",
+      "description": "A business customer (e.g., Restaurant, Petshop)",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Business name" },
+        "ownerEmail": { "type": "string", "format": "email" },
+        "agentStatus": { "type": "string", "enum": ["online", "offline"] },
+        "systemPrompt": { "type": "string", "description": "The AI Agent's context/instructions" }
+      },
+      "required": ["name", "ownerEmail"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "A chat session between an end-customer and the AI agent",
+      "type": "object",
+      "properties": {
+        "tenantId": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "completed", "escalated"] },
+        "lastMessageAt": { "type": "string", "format": "date-time" },
+        "windowExpiresAt": { "type": "string", "format": "date-time", "description": "Absolute timestamp for the 24-hour window expiration" }
+      },
+      "required": ["tenantId", "customerPhone"]
+    },
+    "Metric": {
+      "title": "Metric",
+      "description": "Business performance metrics for a tenant",
+      "type": "object",
+      "properties": {
+        "tenantId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "conversationsCount": { "type": "integer" },
+        "conversionsCount": { "type": "integer" },
+        "avgResponseTime": { "type": "number" }
+      },
+      "required": ["tenantId", "date"]
+    },
+    "WebhookEvent": {
+      "title": "WebhookEvent",
+      "description": "Raw webhook payload from WhatsApp/Meta",
+      "type": "object",
+      "properties": {
+        "messageId": { "type": "string", "description": "Unique ID from Meta for idempotency" },
+        "tenantId": { "type": "string" },
+        "payload": { "type": "object" },
+        "receivedAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["queued", "processed", "failed"] }
+      },
+      "required": ["messageId", "tenantId", "payload"]
+    },
+    "Quota": {
+      "title": "Quota",
+      "description": "Real-time message quota tracking for a tenant",
+      "type": "object",
+      "properties": {
+        "tenantId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "sentCount": { "type": "integer" },
+        "limit": { "type": "integer" },
+        "costPerRecipient": { "type": "number" },
+        "revenuePerRecipient": { "type": "number" }
+      },
+      "required": ["tenantId", "date"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "LGPD-compliant record of data processing activities",
+      "type": "object",
+      "properties": {
+        "tenantId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "action": { "type": "string" },
+        "dataTypes": { "type": "array", "items": { "type": "string" } },
+        "legalBase": { "type": "string" },
+        "userId": { "type": "string" }
+      },
+      "required": ["tenantId", "timestamp", "action"]
+    }
+  },
+  "firestore": {
+    "/tenants/{tenantId}": {
+      "schema": "Tenant",
+      "description": "Tenant configuration and agent settings"
+    },
+    "/tenants/{tenantId}/conversations/{convId}": {
+      "schema": "Conversation",
+      "description": "Conversations handled by the agent for this tenant"
+    },
+    "/tenants/{tenantId}/metrics/{metricId}": {
+      "schema": "Metric",
+      "description": "Daily metrics for the tenant"
+    },
+    "/tenants/{tenantId}/webhooks/{webhookId}": {
+      "schema": "WebhookEvent",
+      "description": "Raw webhooks for audit and reprocessing"
+    },
+    "/tenants/{tenantId}/quotas/{quotaId}": {
+      "schema": "Quota",
+      "description": "Daily quotas and billing metrics"
+    },
+    "/tenants/{tenantId}/audit_logs/{logId}": {
+      "schema": "AuditLog",
+      "description": "LGPD audit trail"
+    }
+  }
+}
