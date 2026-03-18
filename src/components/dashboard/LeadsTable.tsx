@@ -16,7 +16,8 @@ import {
   MoreHorizontal, 
   ArrowUpDown,
   Download,
-  Filter
+  Filter,
+  Plus
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -49,15 +50,15 @@ const columns = [
         nome <ArrowUpDown size={12} />
       </button>
     ),
-    cell: info => <span className="font-bold tracking-tight">{info.getValue()}</span>,
+    cell: info => <span className="font-bold tracking-tight whitespace-nowrap">{info.getValue()}</span>,
   }),
   columnHelper.accessor('email', {
     header: () => <span className="font-serif italic lowercase text-sm">email</span>,
-    cell: info => <span className="text-brand-black/40 font-mono text-xs">{info.getValue()}</span>,
+    cell: info => <span className="text-brand-black/40 font-mono text-xs truncate max-w-[120px] block">{info.getValue()}</span>,
   }),
   columnHelper.accessor('phone', {
     header: () => <span className="font-serif italic lowercase text-sm">telefone</span>,
-    cell: info => <span className="font-mono text-xs">{info.getValue()}</span>,
+    cell: info => <span className="font-mono text-xs whitespace-nowrap">{info.getValue()}</span>,
   }),
   columnHelper.accessor('status', {
     header: () => <span className="font-serif italic lowercase text-sm">status</span>,
@@ -70,7 +71,7 @@ const columns = [
         'Perdido': 'bg-gray-500/10 text-gray-500 border-gray-200',
       };
       return (
-        <span className={cn("px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest border", colors[status])}>
+        <span className={cn("px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest border whitespace-nowrap", colors[status])}>
           {status}
         </span>
       );
@@ -82,11 +83,11 @@ const columns = [
         valor <ArrowUpDown size={12} />
       </button>
     ),
-    cell: info => <span className="font-mono font-bold text-brand-orange">R$ {info.getValue().toLocaleString()}</span>,
+    cell: info => <span className="font-mono font-bold text-brand-orange whitespace-nowrap">R$ {info.getValue().toLocaleString()}</span>,
   }),
   columnHelper.accessor('date', {
     header: () => <span className="font-serif italic lowercase text-sm">data</span>,
-    cell: info => <span className="text-brand-black/40 font-mono text-[10px]">{info.getValue()}</span>,
+    cell: info => <span className="text-brand-black/40 font-mono text-[10px] whitespace-nowrap">{info.getValue()}</span>,
   }),
   columnHelper.display({
     id: 'actions',
@@ -118,52 +119,53 @@ export default function LeadsTable() {
   });
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-6 border-b border-brand-line">
+    <div className="space-y-6 md:space-y-8 font-sans">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-brand-line">
         <div>
-          <div className="text-[10px] font-bold text-brand-orange uppercase tracking-[0.3em] mb-2">Banco_Dados v2.4</div>
-          <h1 className="text-5xl font-display font-bold tracking-tighter leading-none">GESTÃO DE LEADS.</h1>
-          <p className="text-brand-black/40 mt-4 font-medium">Contatos qualificados pelo Agente Nexus em tempo real.</p>
+          <div className="text-[10px] font-bold text-brand-orange uppercase tracking-[0.3em] mb-2 font-mono">Banco_Dados v2.4</div>
+          <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tighter leading-none">GESTÃO DE LEADS.</h1>
+          <p className="text-brand-black/40 mt-4 font-medium text-sm md:text-base">Contatos qualificados pelo Agente Nexus em tempo real.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="btn-secondary px-6 py-3 flex items-center gap-2 text-xs">
+        <div className="flex flex-wrap items-center gap-3">
+          <button className="btn-secondary px-4 md:px-6 py-2 md:py-3 flex items-center gap-2 text-[10px] md:text-xs flex-1 sm:flex-none justify-center">
             <Download size={14} />
             EXPORTAR .CSV
           </button>
-          <button className="btn-primary px-6 py-3 flex items-center gap-2 text-xs">
+          <button className="btn-primary px-4 md:px-6 py-2 md:py-3 flex items-center gap-2 text-[10px] md:text-xs flex-1 sm:flex-none justify-center">
+            <Plus size={14} />
             NOVO REGISTRO
           </button>
         </div>
       </div>
 
-      <div className="bg-white rounded-[32px] border border-brand-line shadow-sm overflow-hidden">
-        <div className="px-8 py-6 border-b border-brand-line flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-brand-paper/20">
-          <div className="relative flex-1 max-w-md">
+      <div className="bg-white rounded-[24px] md:rounded-[32px] border border-brand-line shadow-sm overflow-hidden">
+        <div className="px-6 md:px-8 py-4 md:py-6 border-b border-brand-line flex flex-col sm:flex-row sm:items-center justify-between gap-4 md:gap-6 bg-brand-paper/20">
+          <div className="relative flex-1 max-w-md w-full">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-black/20" size={16} />
             <input
-              placeholder="Filtrar por nome, email ou telefone..."
-              className="w-full pl-12 pr-4 py-3 bg-white border border-brand-line rounded-2xl text-sm outline-none focus:border-brand-orange/50 transition-all font-medium"
+              placeholder="Filtrar registros..."
+              className="w-full pl-12 pr-4 py-2.5 md:py-3 bg-white border border-brand-line rounded-xl md:rounded-2xl text-sm outline-none focus:border-brand-orange/50 transition-all font-medium"
               value={globalFilter}
               onChange={e => setGlobalFilter(e.target.value)}
             />
           </div>
-          <div className="flex items-center gap-3">
-            <div className="text-[10px] font-bold text-brand-black/30 uppercase tracking-widest mr-2">
-              {table.getFilteredRowModel().rows.length} registros encontrados
+          <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+            <div className="text-[9px] md:text-[10px] font-bold text-brand-black/30 uppercase tracking-widest">
+              {table.getFilteredRowModel().rows.length} registros
             </div>
-            <button className="p-3 bg-white border border-brand-line rounded-2xl text-brand-black/40 hover:text-brand-orange hover:border-brand-orange transition-all shadow-sm">
+            <button className="p-2.5 md:p-3 bg-white border border-brand-line rounded-xl md:rounded-2xl text-brand-black/40 hover:text-brand-orange hover:border-brand-orange transition-all shadow-sm">
               <Filter size={18} />
             </button>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id} className="bg-brand-paper/30">
                   {headerGroup.headers.map(header => (
-                    <th key={header.id} className="px-8 py-4 border-b border-brand-line">
+                    <th key={header.id} className="px-6 md:px-8 py-3 md:py-4 border-b border-brand-line">
                       {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </th>
                   ))}
@@ -174,7 +176,7 @@ export default function LeadsTable() {
               {table.getRowModel().rows.map(row => (
                 <tr key={row.id} className="hover:bg-brand-black hover:text-white transition-all duration-200 cursor-pointer group">
                   {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className="px-8 py-5 border-b border-brand-line group-last:border-none">
+                    <td key={cell.id} className="px-6 md:px-8 py-4 md:py-5 border-b border-brand-line group-last:border-none">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
@@ -184,22 +186,22 @@ export default function LeadsTable() {
           </table>
         </div>
 
-        <div className="px-8 py-6 flex items-center justify-between bg-brand-paper/10">
-          <div className="text-[10px] font-bold text-brand-black/30 uppercase tracking-[0.2em]">
-            Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
+        <div className="px-6 md:px-8 py-4 md:py-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-brand-paper/10">
+          <div className="text-[9px] md:text-[10px] font-bold text-brand-black/30 uppercase tracking-[0.2em] font-mono">
+            Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount() || 1}
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="p-2 rounded-xl hover:bg-brand-orange hover:text-white disabled:opacity-20 transition-all border border-brand-line"
+              className="p-2 rounded-xl hover:bg-brand-orange hover:text-white disabled:opacity-20 transition-all border border-brand-line bg-white shadow-sm"
             >
               <ChevronLeft size={18} />
             </button>
             <button
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="p-2 rounded-xl hover:bg-brand-orange hover:text-white disabled:opacity-20 transition-all border border-brand-line"
+              className="p-2 rounded-xl hover:bg-brand-orange hover:text-white disabled:opacity-20 transition-all border border-brand-line bg-white shadow-sm"
             >
               <ChevronRight size={18} />
             </button>
